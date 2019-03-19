@@ -14,7 +14,7 @@ function rendu() {
     
     // rendre ça dynamique avec un select ou autre
     var barLabel = function(d) { return d['Year']; };
-    var barValue = function(d) { return parseFloat(d['Bermuda']); };
+    var barValue = function(d) { return parseFloat(d['Luxembourg']); };
     
 
     var yScale = d3.scale.ordinal().domain(d3.range(0, data.length)).rangeBands([0, data.length * hauteurBarre]);
@@ -59,7 +59,10 @@ function rendu() {
     .attr('height', yScale.rangeBand())
     .attr('width', function(d) { return x(barValue(d)); })
     .attr('stroke', 'black')
-    .attr('fill', 'green');
+    .attr('fill', 'green')
+    .on("mouseover", sourisEntreBarre)
+    .on("mouseout", sourisSortBarre)
+    .on("click", sourisClickBarre);
 
     barsContainer.selectAll("text").data(data).enter().append("text")
     .attr("x", function(d) { return x(barValue(d)); })
@@ -77,3 +80,25 @@ function rendu() {
     .style("stroke", "#000");
 
 }
+
+function sourisEntreBarre(d, i) {  // Add interactivity
+
+    // Use D3 to select element, change color and size
+    d3.select(this).attr({
+      fill: "orange"
+    });
+  }
+  function sourisSortBarre(d, i) {  // Add interactivity
+
+    // Use D3 to select element, change color and size
+    d3.select(this).attr({
+      fill: "green"
+    });
+  }
+  function sourisClickBarre(d, i) {  // Add interactivity
+
+    // Use D3 to select element, change color and size
+    d3.select(this).attr({
+      fill: "red"
+    });
+  }

@@ -1,6 +1,24 @@
+var datas=[];
+
+function fillSelectPays()
+{
+    var pays = Object.keys(datas[0])
+        .filter(key => key != "Year")
+        .sort();
+
+    d3.select("#selectPays")
+        .selectAll("option")
+        .data(pays)
+        .enter()
+        .append("option")
+        .text(function(d) { return d; })
+        .attr("value", function(d) { return d; });
+}
+
 function rendu() {
 
     var data = d3.csv.parse(d3.select('#csv').text());
+    datas = data;
     var largeurLabel = 40; 
     var largeureBarreLabel = 100; 
     var largeurMaxBarre = 800; 
@@ -10,11 +28,20 @@ function rendu() {
 
     var paddingLabelBarre = 5; 
     var hauteurGrilleLabel = 20; 
+
+    fillSelectPays();
+
+    var e = document.getElementById("selectPays");
+    var pays = e.options[e.selectedIndex].value;
+
+    document.getElementById("chart").innerHTML="";
+    document.getElementById("nomPays").innerHTML= "Taux de CO2 émis par an de : " +pays;
  
     
     // rendre ça dynamique avec un select ou autre
     var barLabel = function(d) { return d['Year']; };
-    var barValue = function(d) { return parseFloat(d['Luxembourg']); };
+    var barValue = function(d) { return parseFloat(d[pays]); };
+    console.log(data[0].France);
     
 
     var yScale = d3.scale.ordinal().domain(d3.range(0, data.length)).rangeBands([0, data.length * hauteurBarre]);
@@ -51,6 +78,7 @@ function rendu() {
     .attr("dy", ".35em") 
     .attr('text-anchor', 'end')
     .text(barLabel);
+    
 
     var barsContainer = chart.append('g')
     .attr('transform', 'translate(' + largeureBarreLabel + ',' + (hauteurGrilleLabel + grilleOffset) + ')'); 
@@ -74,31 +102,37 @@ function rendu() {
     .attr("stroke", "none")
     .text(function(d) { return d3.round(barValue(d), 2); });
 
+   
+
     barsContainer.append("line")
     .attr("y1", -grilleOffset)
     .attr("y2", yScale.rangeExtent()[1] + grilleOffset)
     .style("stroke", "#000");
+    function sourisEntreBarre(d, i) {  // Add interactivity
+
+      // Use D3 to select element, change color and size
+      d3.select(this).attr({
+        fill: "orange"
+      });
+     
+    }
+
+    function sourisSortBarre(d, i) {  // Add interactivity
+
+      // Use D3 to select element, change color and size
+      d3.select(this).attr({
+        fill: "green"
+      });
+    }
+    function sourisClickBarre(d, i) {  // Add interactivity
+  
+      // Use D3 to select element, change color and size
+      d3.select(this).attr({
+        fill: "red"
+      });
+    }
 
 }
 
-function sourisEntreBarre(d, i) {  // Add interactivity
 
-    // Use D3 to select element, change color and size
-    d3.select(this).attr({
-      fill: "orange"
-    });
-  }
-  function sourisSortBarre(d, i) {  // Add interactivity
-
-    // Use D3 to select element, change color and size
-    d3.select(this).attr({
-      fill: "green"
-    });
-  }
-  function sourisClickBarre(d, i) {  // Add interactivity
-
-    // Use D3 to select element, change color and size
-    d3.select(this).attr({
-      fill: "red"
-    });
-  }
+ 
